@@ -42,7 +42,7 @@ linuxPackagesFor (
       name = "multikernel";
 
       interactive.sshBackdoor.enable = true;
-      interactive.nodes.machine.imports = [ multikernel ];
+
       nodes.machine.imports = [ multikernel ];
 
       testScript = ''
