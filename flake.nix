@@ -32,12 +32,10 @@
 
           legacyPackages = lib.genAttrs (lib.attrNames (builtins.readDir ./pkgs)) (name: pkgs.${name});
 
-          checks = lib.fix (
-            self: with self; {
-              default = self'.legacyPackages.linuxPackages_multikernel.test;
-              interactive = default.driverInteractive;
-            }
-          );
+          checks = rec {
+            default = self'.legacyPackages.linuxPackages_multikernel.test;
+            interactive = default.driverInteractive;
+          };
 
           formatter = pkgs.nixfmt-tree;
         };
