@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  clangStdenv,
   callPackage,
   linuxPackagesFor,
   testers,
@@ -16,8 +15,6 @@ linuxPackagesFor (
         version = "6.19.0-rc5+multikernel";
         modDirVersion = "6.19.0-rc5";
 
-        stdenv = clangStdenv;
-
         src = fetchFromGitHub {
           owner = "multikernel";
           repo = "linux";
@@ -25,27 +22,15 @@ linuxPackagesFor (
           hash = "sha256-w6yAqoqGK+Yr37v+ciaFP7djl7jw6wW5MNJseRgmTnE=";
         };
 
-        extraMakeFlags = [
-          "LLVM=1"
-          "LLVM_IAS=1"
-          "KCFLAGS+=-O3"
-        ];
-
         structuredExtraConfig = lib.genAttrs [
-          "RUST"
-          "CC_IS_CLANG"
-          "LTO_CLANG_FULL"
-
           "BPF"
           "BPF_JIT"
           "BPF_JIT_ALWAYS_ON"
           "BPF_KPROBE_OVERRIDE"
           "FUNCTION_ERROR_INJECTION"
-
           "MULTIKERNEL"
+          "RUST"
         ] (_: lib.mkForce lib.kernel.yes);
-
-        ignoreConfigErrors = true;
       }
       // (args.argsOverride or { })
     )
