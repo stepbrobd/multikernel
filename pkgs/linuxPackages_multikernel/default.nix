@@ -8,29 +8,46 @@
 
 linuxPackagesFor (
   callPackage (
-    { buildLinux, fetchFromGitHub, ... }@args:
+    {
+      buildLinux,
+      fetchzip,
+      fetchurl,
+      ...
+    }@args:
     buildLinux (
       args
       // {
-        version = "6.19.0-rc5+multikernel";
-        modDirVersion = "6.19.0-rc5";
+        version = "6.19.2+multikernel";
+        modDirVersion = "6.19.2";
 
-        src = fetchFromGitHub {
-          owner = "multikernel";
-          repo = "linux";
-          rev = "483192c3889ca357f8b9cdf5342e747dc456b8f1";
-          hash = "sha256-w6yAqoqGK+Yr37v+ciaFP7djl7jw6wW5MNJseRgmTnE=";
+        src = fetchzip {
+          url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.2.tar.xz";
+          hash = "sha256-aq2erwG08V8BZNJZXlvUTzu+3MaPmEmhdqc+vi2fr08=";
         };
 
-        structuredExtraConfig = lib.genAttrs [
-          "BPF"
-          "BPF_JIT"
-          "BPF_JIT_ALWAYS_ON"
-          "BPF_KPROBE_OVERRIDE"
-          "FUNCTION_ERROR_INJECTION"
-          "MULTIKERNEL"
-          "RUST"
-        ] (_: lib.mkForce lib.kernel.yes);
+        kernelPatches = [
+          {
+            name = "multikernel";
+            patch = fetchurl {
+              url = "https://lore.kernel.org/multikernel/20251019061631.2235405-1-xiyou.wangcong@gmail.com/t.mbox.gz";
+              hash = "sha256-4FVMbzgEqbPUHJnNLDIYkB7pmvmYSJo6damDZanHqbw=";
+            };
+            structuredExtraConfig = lib.genAttrs [
+              "MULTIKERNEL"
+            ] (_: lib.kernel.yes);
+          }
+          {
+            name = "build";
+            structuredExtraConfig = lib.genAttrs [
+              "BPF"
+              "BPF_JIT"
+              "BPF_JIT_ALWAYS_ON"
+              "BPF_KPROBE_OVERRIDE"
+              "FUNCTION_ERROR_INJECTION"
+              "RUST"
+            ] (_: lib.kernel.yes);
+          }
+        ];
       }
       // (args.argsOverride or { })
     )
