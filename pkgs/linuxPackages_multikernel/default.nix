@@ -29,6 +29,7 @@ linuxPackagesFor (
           "LLVM=1"
           "LLVM_IAS=1"
           "KCFLAGS+=-O3"
+          "KCFLAGS+=-Wno-error=unused-command-line-argument"
         ];
 
         structuredExtraConfig = lib.genAttrs [
@@ -44,8 +45,6 @@ linuxPackagesFor (
 
           "MULTIKERNEL"
         ] (_: lib.mkForce lib.kernel.yes);
-
-        ignoreConfigErrors = true;
       }
       // (args.argsOverride or { })
     )
