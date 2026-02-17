@@ -8,47 +8,29 @@
 
 linuxPackagesFor (
   callPackage (
-    {
-      buildLinux,
-      fetchzip,
-      fetchurl,
-      ...
-    }@args:
+    { buildLinux, fetchFromGitHub, ... }@args:
     buildLinux (
       args
       // {
-        version = "6.19.0+multikernel";
-        modDirVersion = "6.19.0";
+        version = "6.19.0-rc5+multikernel";
+        modDirVersion = "6.19.0-rc5";
 
-        src = fetchzip {
-          url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.tar.xz";
-          hash = "sha256-Mq1NVGL7Y7NtEEPdVvskGhG6CeIscTA6YYXdwtEqFG0=";
+        src = fetchFromGitHub {
+          owner = "multikernel";
+          repo = "linux";
+          rev = "483192c3889ca357f8b9cdf5342e747dc456b8f1";
+          hash = "sha256-w6yAqoqGK+Yr37v+ciaFP7djl7jw6wW5MNJseRgmTnE=";
         };
 
-        kernelPatches = [
-          {
-            name = "multikernel";
-            patch = fetchurl {
-              url = "https://lore.kernel.org/multikernel/20251019061631.2235405-1-xiyou.wangcong@gmail.com/t.mbox.gz";
-              hash = "sha256-4FVMbzgEqbPUHJnNLDIYkB7pmvmYSJo6damDZanHqbw=";
-            };
-            structuredExtraConfig = lib.genAttrs [
-              "MULTIKERNEL"
-            ] (_: lib.mkForce lib.kernel.yes);
-          }
-          {
-            name = "build";
-            patch = null;
-            structuredExtraConfig = lib.genAttrs [
-              "BPF"
-              "BPF_JIT"
-              "BPF_JIT_ALWAYS_ON"
-              "BPF_KPROBE_OVERRIDE"
-              "FUNCTION_ERROR_INJECTION"
-              "RUST"
-            ] (_: lib.mkForce lib.kernel.yes);
-          }
-        ];
+        structuredExtraConfig = lib.genAttrs [
+          "BPF"
+          "BPF_JIT"
+          "BPF_JIT_ALWAYS_ON"
+          "BPF_KPROBE_OVERRIDE"
+          "FUNCTION_ERROR_INJECTION"
+          "MULTIKERNEL"
+          "RUST"
+        ] (_: lib.mkForce lib.kernel.yes);
       }
       // (args.argsOverride or { })
     )
