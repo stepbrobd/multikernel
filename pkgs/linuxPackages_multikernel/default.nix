@@ -22,7 +22,7 @@ linuxPackagesFor (
 
         src = fetchzip {
           url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.2.tar.xz";
-          hash = "sha256-aq2erwG08V8BZNJZXlvUTzu+3MaPmEmhdqc+vi2fr08=";
+          hash = "sha256-g6R+/ErrRxsGrFhyNKJGkb1tfSz005YfjIe/rp+Gjc4=";
         };
 
         kernelPatches = [
@@ -34,10 +34,11 @@ linuxPackagesFor (
             };
             structuredExtraConfig = lib.genAttrs [
               "MULTIKERNEL"
-            ] (_: lib.kernel.yes);
+            ] (_: lib.mkForce lib.kernel.yes);
           }
           {
             name = "build";
+            patch = null;
             structuredExtraConfig = lib.genAttrs [
               "BPF"
               "BPF_JIT"
@@ -45,7 +46,7 @@ linuxPackagesFor (
               "BPF_KPROBE_OVERRIDE"
               "FUNCTION_ERROR_INJECTION"
               "RUST"
-            ] (_: lib.kernel.yes);
+            ] (_: lib.mkForce lib.kernel.yes);
           }
         ];
       }
