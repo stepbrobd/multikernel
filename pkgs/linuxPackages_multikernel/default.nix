@@ -17,12 +17,12 @@ linuxPackagesFor (
     buildLinux (
       args
       // {
-        version = "6.19.2+multikernel";
-        modDirVersion = "6.19.2";
+        version = "6.19.0+multikernel";
+        modDirVersion = "6.19.0";
 
         src = fetchzip {
-          url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.2.tar.xz";
-          hash = "sha256-g6R+/ErrRxsGrFhyNKJGkb1tfSz005YfjIe/rp+Gjc4=";
+          url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.tar.xz";
+          hash = "sha256-Mq1NVGL7Y7NtEEPdVvskGhG6CeIscTA6YYXdwtEqFG0=";
         };
 
         kernelPatches = [
