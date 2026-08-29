@@ -5,7 +5,7 @@
 }:
 
 pkgsPrev.kexec-tools.overrideAttrs (prev: {
-  version = "2.0.32+multikernel";
+  version = "${prev.version}+multikernel";
 
   __intentionallyOverridingVersion = true;
 
