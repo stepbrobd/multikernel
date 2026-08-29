@@ -9,7 +9,8 @@ Read these:
 
 ```sh
 # driver
-nom build .#checks.x86_64-linux.default.driverInteractive; ./result/bin/nixos-test-driver
+nom build .#checks.x86_64-linux.default.driverInteractive --substituters 'https://cache.ysun.co' --trusted-public-keys 'cache.ysun.co-1:WxPYwT5g3kt9XhUhHPpNLZKI9HIOsVVAuqSHpok8Qt4='
+./result/bin/nixos-test-driver
 # in VM
 zcat /proc/config.gz | grep CONFIG_MULTIKERNEL=y
 mountpoint /sys/fs/multikernel # mounted by the nixos module
