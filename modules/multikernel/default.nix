@@ -10,4 +10,13 @@ with inputs.self.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     kerf
     kexec-tools
   ];
+
+  systemd.mounts = [
+    {
+      wantedBy = [ "multi-user.target" ];
+      what = "none";
+      where = "/sys/fs/multikernel";
+      type = "multikernel";
+    }
+  ];
 }
