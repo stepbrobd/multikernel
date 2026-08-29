@@ -12,9 +12,16 @@ python3.pkgs.buildPythonPackage {
     hash = "sha256-wY15Oc6xEkU6bfucDgbom/aHHswPn6nXIYV/jKT36bc=";
   };
 
-  dependencies = with python3.pkgs; [
-    setuptools
-  ];
+  # pkg_resources is gone from current setuptools
+  postPatch = ''
+    substituteInPlace src/rdtsc/__init__.py \
+      --replace-fail "import pkg_resources" "import importlib.resources" \
+      --replace-fail \
+        "pkg_resources.resource_filename('rdtsc', sofile)" \
+        "str(importlib.resources.files('rdtsc') / sofile)"
+  '';
+
+  build-system = with python3.pkgs; [ setuptools ];
 
   nativeCheckInputs = with python3.pkgs; [
     pytestCheckHook
