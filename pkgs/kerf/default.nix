@@ -2,27 +2,57 @@
   python3,
   rdtsc,
   fetchFromGitHub,
+  pkgsStatic,
 }:
 
-python3.pkgs.buildPythonPackage {
-  pname = "kerf";
-  version = "0.1.0-unstable-2026-01-24";
-  pyproject = true;
+let
+  version = "0.2.0";
 
   src = fetchFromGitHub {
     owner = "multikernel";
     repo = "kerf";
-    rev = "57018c5f909dc40ac192f2375ddd371ec4f06bb0";
-    hash = "sha256-EvVwRKfy1au8DxXhLPJwXN5+7uC6kRUfmQsp93rsqVQ=";
+    rev = "8b72b3e9b266f8d32e707e2c1743ad7afc50b1ec";
+    hash = "sha256-feP1fO7A6ARdth05Eo6PltzWkAC3UKdzZ1vtM0bg7hY=";
   };
+
+  kerf-init = pkgsStatic.stdenv.mkDerivation {
+    pname = "kerf-init";
+    inherit version src;
+
+    sourceRoot = "source/src/init";
+
+    buildPhase = ''
+      runHook preBuild
+      make CC="$CC"
+      runHook postBuild
+    '';
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 kerf-init $out/bin/kerf-init
+      runHook postInstall
+    '';
+  };
+in
+
+python3.pkgs.buildPythonPackage {
+  pname = "kerf-multikernel";
+  inherit version src;
+  pyproject = true;
+
+  postPatch = ''
+    install -m755 ${kerf-init}/bin/kerf-init src/kerf/data/kerf-init
+  '';
+
+  build-system = with python3.pkgs; [ poetry-core ];
 
   dependencies = with python3.pkgs; [
     click
-    poetry-core
     libfdt
     pyudev
     pyyaml
     rdtsc
+    zstandard
   ];
 
   nativeCheckInputs = with python3.pkgs; [ pytestCheckHook ];
