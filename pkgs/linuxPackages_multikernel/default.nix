@@ -93,6 +93,8 @@ linuxPackagesFor (
           machine.succeed("zcat /proc/config.gz | grep CONFIG_MULTIKERNEL=y")
           machine.succeed("zcat /proc/config.gz | grep CONFIG_MKTTY=y")
           machine.succeed("mountpoint -q /sys/fs/multikernel")
+          # check above linked issue
+          # machine.succeed("modprobe mk_transport")
 
       with subtest("kerf init reserves pool cpus and memory"):
           machine.succeed("kerf init --cpus=2-3 --memory=1GB")
