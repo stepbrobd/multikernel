@@ -6,13 +6,13 @@
 }:
 
 let
-  version = "0.2.0";
+  version = "0.2.0-unstable-2026-08-30";
 
   src = fetchFromGitHub {
     owner = "multikernel";
     repo = "kerf";
-    rev = "8b72b3e9b266f8d32e707e2c1743ad7afc50b1ec";
-    hash = "sha256-feP1fO7A6ARdth05Eo6PltzWkAC3UKdzZ1vtM0bg7hY=";
+    rev = "49fd9444c2571805dd23160673c3ca4a2a3e3229";
+    hash = "sha256-c7OUmEMOCeSCYudX82fDr29fBy7Chu+RZWrnuWswgpA=";
   };
 
   kerf-init = pkgsStatic.stdenv.mkDerivation {
@@ -56,6 +56,13 @@ python3.pkgs.buildPythonPackage {
   ];
 
   nativeCheckInputs = with python3.pkgs; [ pytestCheckHook ];
+
+  # forget to monkeypatch get_valid_apic_ids_from_system and read build machines /proc/cpuinfo
+  disabledTests = [
+    "test_a_pooled_device_is_resolved_from_the_pool"
+    "test_a_pooled_device_keeps_a_new_alias"
+    "test_an_unknown_device_is_still_an_error"
+  ];
 
   pythonImportsCheck = [ "kerf" ];
 }
