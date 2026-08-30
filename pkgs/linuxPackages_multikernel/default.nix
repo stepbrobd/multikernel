@@ -18,25 +18,20 @@ linuxPackagesFor (
         src = fetchFromGitHub {
           owner = "multikernel";
           repo = "linux";
-          rev = "ed3e74498f402cbe55210a9afdd8e9b0629c7714";
-          hash = "sha256-fwPsQ23U01j9ngBQ0y23oRrxRTa6q12phvjFLP1LGOQ=";
+          rev = "445091260d5104b11cc616cb80c411099433b62f";
+          hash = "sha256-qEG5NIyPkDFel5Y7xsAZloha8Ih37CtWcMiDzA1VcNE=";
         };
 
-        structuredExtraConfig =
-          lib.genAttrs [
-            "BPF"
-            "BPF_JIT"
-            "BPF_JIT_ALWAYS_ON"
-            "BPF_KPROBE_OVERRIDE"
-            "FUNCTION_ERROR_INJECTION"
-            "MKTTY"
-            "MULTIKERNEL"
-            "RUST"
-          ] (_: lib.mkForce lib.kernel.yes)
-          // {
-            # off until https://github.com/multikernel/linux/issues/38 is addressed
-            MULTIKERNEL_VSOCKETS = lib.kernel.no;
-          };
+        structuredExtraConfig = lib.genAttrs [
+          "BPF"
+          "BPF_JIT"
+          "BPF_JIT_ALWAYS_ON"
+          "BPF_KPROBE_OVERRIDE"
+          "FUNCTION_ERROR_INJECTION"
+          "MKTTY"
+          "MULTIKERNEL"
+          "RUST"
+        ] (_: lib.mkForce lib.kernel.yes);
       }
       // (args.argsOverride or { })
     )
@@ -93,8 +88,7 @@ linuxPackagesFor (
           machine.succeed("zcat /proc/config.gz | grep CONFIG_MULTIKERNEL=y")
           machine.succeed("zcat /proc/config.gz | grep CONFIG_MKTTY=y")
           machine.succeed("mountpoint -q /sys/fs/multikernel")
-          # check above linked issue
-          # machine.succeed("modprobe mk_transport")
+          machine.succeed("modprobe mk_transport")
 
       with subtest("kerf init reserves pool cpus and memory"):
           machine.succeed("kerf init --cpus=2-3 --memory=1GB")
